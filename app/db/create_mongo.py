@@ -1,7 +1,7 @@
 import os
 from app.db import categories
 from app.db import events
-from app.db import photos
+from app.db import media
 import app.util.mongo as mongo_util
 
 db_name = os.environ['DB_NAME']
@@ -20,5 +20,5 @@ def create_db():
                 db = client[db_name]
                 categories.create(db)
                 events.create(db)
-                photos.create(db)
+                media.create(db)
     print('---- success')

@@ -21,16 +21,16 @@ class Category:
         'id': '_id',
         'name': 'category',
         'priority': 'priority',
-        'event': 'event'
+        'event_id': 'event'
     }
 
-    def save(event: str, category: str, priority: int) -> str:
+    def save(event_id: str, category_name: str, priority: int) -> str:
         ''' Saves a document under a specified event and returns the assigned id '''
         collection = get_collection()
         try:
             to_insert = {
-                Category.keys['name']: category,
-                Category.keys['event']: event,
+                Category.keys['name']: category_name,
+                Category.keys['event']: event_id,
                 Category.keys['priority']: priority
             }
             res = collection.insert_one(to_insert)
@@ -38,10 +38,10 @@ class Category:
         except BaseException as e:
             raise str(e)
 
-    def get(event: str) -> list:
+    def get(event_id: str) -> list:
         ''' The only access pattern is to get all categories by the given event ''' 
         collection = get_collection()
-        results = collection.find({Category.keys['event']: event}, {'_id': 0})
+        results = collection.find({Category.keys['event_id']: event})
         return list(results)
 
     def delete(category: str):
