@@ -4,28 +4,39 @@ from app.db.categories import Category
 
 categories_api = Blueprint('categories_api', __name__)
 
-@categories_api.route('/events/<string:event>/categories', methods=['POST'])
+@categories_api.route('/events/<string:event_id>/categories', methods=['POST'])
 @validate_authorization
 @validate_json({
     'type': 'object',
     'properties': {
-        'priority': {'type' : 'number', 'minimum': 0, 'maximum': 10},
-        'category': {'type': 'string'}
+        'order': {'type' : 'number', 'minimum': 0, 'maximum': 10},
+        'name': {'type': 'string', 'minLength': 3}
     },
-    'required': ['priority', 'event', 'category']
+    'required': ['order', 'name']
 })
-def create(event: str):
+def create(event_id: str):
     body = request.get_json()
-    category = body.get('category')
-    priority = body.get('priority')
-    Category.save(event_id = event, category_name = category, priority = priority), 200
-    return jsonify({'success': True})
+    category = body.get('name')
+    order = body.get('order')
+    ret = Category.save(event_id = event_id, category_name = category, order = order)
+    return jsonify({'success': True, 'category_id': ret}), 200
 
-@categories_api.route('/events/<string:event>/categories', methods=['GET'])
-def get_by_event(event: str):
-    categories = Category.get(event_id=event)
+@categories_api.route('/events/<string:event_id>/categories', methods=['GET'])
+def get_by_event(event_id: str):
+    categories = Category.get(event_id=event_id)
     return jsonify({'success': True, 'categories': categories}), 200
 
-
-# size = int(request.args.get('size')) if 'size' in request.args else 25
-# start = int(request.args.get('page')) * size if 'page' in request.args else 0
+@categories_api.route('/events/<string:event_id>/categories/<string:category_id>', methods=['PUT'])
+@categories_api.route('/categories/<string:category_id>', methods=['PUT'])
+@validate_authorization
+@validate_json({
+    'type': 'object',
+    'properties': {
+        'order': {'type' : 'number', 'minimum': 0, 'maximum': 10},
+        'name': {'type': 'string'}
+    },
+})
+def edit(event_id: str, category_id: str):
+    body = request.get_json()
+    ret = Catgory.update_meta(category_id=category_id, request_update=body)
+    return jsonify({'success': ret})
