@@ -13,7 +13,8 @@ srig_manage_api = Blueprint('srig_manage_api', __name__)
     'properties': {
         'username': {'type': 'string'},
         'password': {'type': 'string'}
-    }
+    },
+    'required': ['username', 'password']
 })
 def login():
     body = request.get_json()
@@ -24,7 +25,7 @@ def login():
     if user == secret_user and password == secret_password:
         res = jsonify({'success': True, 'cosConfig': general.get_cos_creds()})
         token = jwt_util.produce_jwt()
-        res.set_cookie("AUTH_TOKEN", token, httponly=True, max_age=7200)
+        res.set_cookie("AUTH_TOKEN", token)
         return res, 200
     else:
         return jsonify({'success': False}), 403

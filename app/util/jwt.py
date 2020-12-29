@@ -9,7 +9,7 @@ def produce_jwt() -> str:
     JWT expires in 2 hours!
     All auth handled through this API so Symmetric encryption HS256 fine for now.
     """
-    return jwt.encode({'exp': datetime.utcnow() + timedelta(hours=2)}, secret, algorithm='HS256')
+    return jwt.encode({'exp': datetime.utcnow() + timedelta(hours=2)}, secret, algorithm='HS256').decode('utf-8')
 
 def is_jwt_valid(token: str) -> bool:
     """ Checks if a JWT is valid """

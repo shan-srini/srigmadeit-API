@@ -1,6 +1,7 @@
 # Collection events operations
 from app.util import mongo as mongo_util
-import uuid
+from datetime import datetime, timedelta
+import re
 
 collection_name = "events"
 
@@ -23,23 +24,32 @@ class Event:
         ''' Accepts an event name, epoch int timestamp -> ObjectId '''
         collection = get_collection()
         try:
-            _id = str(uuid.uuid4()) # pretty much using uuid cause bson String = cooler than ObjectID type :p
+            _id = name + (datetime.fromtimestamp(timestamp) + timedelta(days=1)).strftime("%m-%d-%y") # timestamp(april 21, 2000) -> 04-21-2000
             event = {
                 '_id': _id,
                 Event.keys['name']: name,
                 Event.keys['timestamp']: timestamp
             }
             res = collection.insert_one(event)
+            print(res)
             return str(res.inserted_id)
         except:
             # handle not unique event name
-            raise Exception
+            return False
 
-    def get(start = 0, size = 25):
+    def get(start = 0, size = 25, search_name = None):
         ''' Gets some events '''
         collection = get_collection()
-        events = collection.find({}, skip = start, limit = size).sort("$natural", -1)
+        query: dict = {}
+        if search_name:
+            query.update({Event.keys['name']: re.compile(search_name, re.IGNORECASE)})
+        events = collection.find(query, skip = start, limit = size).sort("$natural", -1)
         return events # NOTICE RETURNS CURSOR
+    
+    def get_meta(event_id: str):
+        collection = get_collection()
+        return collection.find_one({'_id': event_id})
+
 
     def delete(event_id):
         # Going to need to delete all categories, and all nested pictures, then return 

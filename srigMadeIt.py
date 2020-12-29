@@ -4,7 +4,7 @@ from flask_cors import CORS
 from app.db.create_mongo import create_db
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=["http://192.168.1.202:1234"])
+CORS(app, supports_credentials=True, origins=["*"])
 
 from app.routes.events_api import events_api
 from app.routes.categories_api import categories_api
@@ -23,3 +23,4 @@ if __name__ == '__main__':
     if len(sys.argv) == 2 and sys.argv[1] == 'create_db':
         create_db()
     app.run(host='0.0.0.0', port=5000, debug=True)
+    # app.run(port=5000, debug=True)
