@@ -1,1 +1,1 @@
-web: gunicorn srigmadeit:app
+web: gunicorn srigmadeit_api:app
