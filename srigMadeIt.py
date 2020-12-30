@@ -22,5 +22,5 @@ def hello():
 if __name__ == '__main__':
     if len(sys.argv) == 2 and sys.argv[1] == 'create_db':
         create_db()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run()
     # app.run(port=5000, debug=True)
