@@ -41,3 +41,14 @@ def get_event(event_id: str):
         return jsonify({'success': False, 'log': "Event not found"}), 404
     categories = Category.get(event_id = event_id)
     return jsonify({'success': True, 'event_meta': event_meta, 'categories': categories}), 200
+
+@events_api.route('/events/<string:event_id>', methods=['GET'])
+@validate_authorization
+def delete_event(event_id: str):
+    if Event.delete(event_id=event_id):
+        Category.delete(event_id=event_id)
+        deleted_media_ids = Media.delete(event_id=event_id)
+        deleted_media_ids.append(event_id)
+        return jsonify({'success': True, 'deleted_media': deleted_media_ids})
+    else:
+        return jsonify({'success': False}), 404

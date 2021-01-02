@@ -22,23 +22,35 @@ class Media:
         'source': 'source'
     }
 
-    def save(event_id: str, category_id: str, count: int, source: str) -> str:
+    def save(event_id: str, category_id: str, count: int, source: str, request_id: str = None) -> str:
         ''' Saves a document under a specified category_id and returns the assigned id '''
         collection = get_collection()
         # try:
-        to_insert = [{'_id': str(uuid.uuid4()), Media.keys['event_id']: event_id, Media.keys['category_id']: category_id, Media.keys['source']: source} for ii in range(count)]
+        to_insert_id = str(request_id if request_id else str(uuid.uuid4())) # Videos have pre created unique ids, photos require id creation
+        to_insert = [{'_id': to_insert_id, Media.keys['event_id']: event_id, Media.keys['category_id']: category_id, Media.keys['source']: source} for ii in range(count)]
         res = collection.insert_many(to_insert)
         return res.inserted_ids
         # except:
         #     raise Exception
 
-    def get(category_id: str, size = 25, start = 0):
-        ''' Only access pattern is to get an x number of documents under a certain category '''
+    def get(category_id: str = None, event_id = None, size = 25, start = 0, reverse = False):
         collection = get_collection()
-        media = collection.find({Media.keys['category_id']: category_id}, skip=start, limit=size)
+        query = {}
+        if category_id:
+            query[Media.keys['category_id']] = category_id
+        elif event_id:
+            query[Media.keys['event_id']] = event_id
+        media = collection.find(query, skip=start, limit=size)
+        if reverse:
+            media.sort([('$natural', -1)])
         return media # NOTICE RETURNS CURSOR
 
-    def delete(media_id: str):
-        # Need to decide if I should let UI delete from COS or do it on API side?
-        # Probably gonna do it on UI side for consistency, though I'm not a fan of it :/
-        return True
+    def delete(media_id: str = None, event_id: str = None) -> dict:
+        ''' deletes media and returns the ids of the media deleted '''
+        collection = get_collection()
+        delete_query = {}
+        if (event_id):
+            delete_query[Media.keys['event_id']] = event_id
+        removed = collection.find(delete_query)
+        delete_result = collection.delete_many(delete_query)
+        return removed
