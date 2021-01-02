@@ -9,7 +9,7 @@ categories_api = Blueprint('categories_api', __name__)
 @validate_json({
     'type': 'object',
     'properties': {
-        'order': {'type' : 'number', 'minimum': 0, 'maximum': 10},
+        'order': {'type' : 'number', 'minimum': 0, 'maximum': 50},
         'name': {'type': 'string', 'minLength': 3}
     },
     'required': ['order', 'name']
