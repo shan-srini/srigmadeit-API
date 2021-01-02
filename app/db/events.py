@@ -51,7 +51,7 @@ class Event:
         return collection.find_one({'_id': event_id})
 
 
-    def delete(event_id):
-        # Going to need to delete all categories, and all nested pictures, then return 
-        # a list of deleted picture ids to cleanup the COS
-        return True
+    def delete(event_id: str) -> bool:
+        collection = get_collection()
+        result = collection.delete_one({'_id': event_id})
+        return result.deleted_count == 1

@@ -30,7 +30,7 @@ class Category:
         collection = get_collection()
         try:
             to_insert = {
-                Category.keys['id']: uuid.uuid4(),
+                Category.keys['id']: str(uuid.uuid4()),
                 Category.keys['name']: category_name,
                 Category.keys['event']: event_id,
                 Category.keys['order']: order
@@ -57,7 +57,10 @@ class Category:
         ret = collection.update_one({Category.keys['id']: category_id}, update_body)
         return ret.modified_count == 1
 
-    def delete(category: str):
-        # Delete and also call delete in photos collection for all photos under this category
-        # Might also need to return a list of all photo ids to delete to the UI so it can delete from COS
-        return True
+    def delete(event_id: str = None, category_id: str = None):
+        collection = get_collection()
+        delete_query = {}
+        if (event_id):
+            delete_query[Category.keys['event']] = event_id
+        result = collection.delete_many(delete_query)
+        return result.deleted_count > 0
