@@ -9,7 +9,7 @@ media_api = Blueprint('media_api', __name__)
 @validate_json({
     'type': 'object',
     'properties': {
-        'source': {'type': 'string', 'enum': ['b2', 'dm']},
+        'source': {'type': 'string', 'enum': ['b2', 'gd']}, # backblaze b2 or Google Drive (videos)
         'count': {'type': 'number', 'minimum': 1},
         'request_id': {'type': 'string'}
     },

@@ -45,12 +45,12 @@ class Media:
             media.sort([('$natural', -1)])
         return media # NOTICE RETURNS CURSOR
 
-    def delete(media_id: str = None, event_id: str = None) -> dict:
+    def delete(media_id: str = None, event_id: str = None) -> list:
         ''' deletes media and returns the ids of the media deleted '''
         collection = get_collection()
         delete_query = {}
         if (event_id):
             delete_query[Media.keys['event_id']] = event_id
-        removed = collection.find(delete_query)
+        removed = list(collection.find(delete_query))
         delete_result = collection.delete_many(delete_query)
         return removed
