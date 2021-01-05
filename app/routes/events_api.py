@@ -44,7 +44,7 @@ def get_event(event_id: str):
     return jsonify({'success': True, 'event_meta': event_meta, 'categories': categories}), 200
 
 @events_api.route('/events/<string:event_id>', methods=['DELETE'])
-# @validate_authorization
+@validate_authorization
 def delete_event(event_id: str):
     if Event.delete(event_id=event_id):
         Category.delete(event_id=event_id)

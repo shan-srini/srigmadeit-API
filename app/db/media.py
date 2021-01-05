@@ -25,13 +25,12 @@ class Media:
     def save(event_id: str, category_id: str, count: int, source: str, request_id: str = None) -> str:
         ''' Saves a document under a specified category_id and returns the assigned id '''
         collection = get_collection()
-        # try:
-        to_insert_id = str(request_id if request_id else str(uuid.uuid4())) # Videos have pre created unique ids, photos require id creation
-        to_insert = [{'_id': to_insert_id, Media.keys['event_id']: event_id, Media.keys['category_id']: category_id, Media.keys['source']: source} for ii in range(count)]
-        res = collection.insert_many(to_insert)
-        return res.inserted_ids
-        # except:
-        #     raise Exception
+        try:
+            to_insert = [{'_id': str(request_id if request_id else str(uuid.uuid4())), Media.keys['event_id']: event_id, Media.keys['category_id']: category_id, Media.keys['source']: source} for ii in range(count)]
+            res = collection.insert_many(to_insert)
+            return res.inserted_ids
+        except:
+            raise Exception
 
     def get(category_id: str = None, event_id = None, size = 25, start = 0, reverse = False):
         collection = get_collection()
