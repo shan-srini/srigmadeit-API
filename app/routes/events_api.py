@@ -2,6 +2,7 @@ from flask import request, jsonify, Blueprint
 from app.util.validators import validate_json, validate_query_params, validate_authorization
 from app.db.events import Event
 from app.db.categories import Category
+from app.db.media import Media
 
 events_api = Blueprint('events_api', __name__)
 
@@ -42,13 +43,12 @@ def get_event(event_id: str):
     categories = Category.get(event_id = event_id)
     return jsonify({'success': True, 'event_meta': event_meta, 'categories': categories}), 200
 
-@events_api.route('/events/<string:event_id>', methods=['GET'])
+@events_api.route('/events/<string:event_id>', methods=['DELETE'])
 @validate_authorization
 def delete_event(event_id: str):
     if Event.delete(event_id=event_id):
         Category.delete(event_id=event_id)
         deleted_media_ids = Media.delete(event_id=event_id)
-        deleted_media_ids.append(event_id)
         return jsonify({'success': True, 'deleted_media': deleted_media_ids})
     else:
         return jsonify({'success': False}), 404

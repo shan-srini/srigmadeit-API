@@ -22,16 +22,15 @@ class Media:
         'source': 'source'
     }
 
-    def save(event_id: str, category_id: str, count: int, source: str, request_id: str = None) -> str:
+    def save(event_id: str, category_id: str, count: int, source: str) -> str:
         ''' Saves a document under a specified category_id and returns the assigned id '''
         collection = get_collection()
-        # try:
-        to_insert_id = str(request_id if request_id else str(uuid.uuid4())) # Videos have pre created unique ids, photos require id creation
-        to_insert = [{'_id': to_insert_id, Media.keys['event_id']: event_id, Media.keys['category_id']: category_id, Media.keys['source']: source} for ii in range(count)]
-        res = collection.insert_many(to_insert)
-        return res.inserted_ids
-        # except:
-        #     raise Exception
+        try:
+            to_insert = [{'_id': str(uuid.uuid4()), Media.keys['event_id']: event_id, Media.keys['category_id']: category_id, Media.keys['source']: source} for ii in range(count)]
+            res = collection.insert_many(to_insert)
+            return res.inserted_ids
+        except:
+            raise Exception
 
     def get(category_id: str = None, event_id = None, size = 25, start = 0, reverse = False):
         collection = get_collection()
@@ -45,12 +44,12 @@ class Media:
             media.sort([('$natural', -1)])
         return media # NOTICE RETURNS CURSOR
 
-    def delete(media_id: str = None, event_id: str = None) -> dict:
+    def delete(media_id: str = None, event_id: str = None) -> list:
         ''' deletes media and returns the ids of the media deleted '''
         collection = get_collection()
         delete_query = {}
         if (event_id):
             delete_query[Media.keys['event_id']] = event_id
-        removed = collection.find(delete_query)
+        removed = list(collection.find(delete_query))
         delete_result = collection.delete_many(delete_query)
         return removed
