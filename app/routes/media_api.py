@@ -33,3 +33,10 @@ def get_media():
         return jsonify({success: False, 'log': 'provide searchParam categoryId or eventId'}), 400
     media = Media.get(category_id = category_id, event_id = event_id, start = start, size = size, reverse = reverse)
     return jsonify({'success': True, 'media_ids': list(media), 'count': media.count()}), 200
+
+@media_api.route('/media/<string:media_id>', methods=['DELETE'])
+@validate_authorization
+def delete_media(media_id):
+    res = Media.delete(media_id=media_id)
+    success = len(res) == 1
+    return jsonify({'success': success, 'deleted_id': res[0]})

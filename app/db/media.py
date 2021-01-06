@@ -50,6 +50,8 @@ class Media:
         delete_query = {}
         if (event_id):
             delete_query[Media.keys['event_id']] = event_id
+        if (media_id):
+            delete_query[Media.keys['id']] = media_id
         removed = list(collection.find(delete_query))
         delete_result = collection.delete_many(delete_query)
         return removed
