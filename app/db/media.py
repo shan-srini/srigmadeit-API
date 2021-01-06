@@ -22,11 +22,11 @@ class Media:
         'source': 'source'
     }
 
-    def save(event_id: str, category_id: str, count: int, source: str, request_id: str = None) -> str:
+    def save(event_id: str, category_id: str, count: int, source: str) -> str:
         ''' Saves a document under a specified category_id and returns the assigned id '''
         collection = get_collection()
         try:
-            to_insert = [{'_id': str(request_id if request_id else str(uuid.uuid4())), Media.keys['event_id']: event_id, Media.keys['category_id']: category_id, Media.keys['source']: source} for ii in range(count)]
+            to_insert = [{'_id': str(uuid.uuid4()), Media.keys['event_id']: event_id, Media.keys['category_id']: category_id, Media.keys['source']: source} for ii in range(count)]
             res = collection.insert_many(to_insert)
             return res.inserted_ids
         except:
