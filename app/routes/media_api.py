@@ -9,27 +9,23 @@ media_api = Blueprint('media_api', __name__)
 @validate_json({
     'type': 'object',
     'properties': {
-        'source': {'type': 'string', 'enum': ['b2', 'gd']}, # backblaze b2 or Google Drive (videos)
+        'source': {'type': 'string', 'enum': ['b2', 'oracle']}, # backblaze b2 or Google Drive (videos)
         'count': {'type': 'number', 'minimum': 1},
-        'request_id': {'type': 'string'}
     },
     'required': ['source']
 })
 def create(event_id:str, category_id: str):
-    ''' Will create a Media instance under this event/category and return uuid '''
+    ''' Will create Media under this event/category and return uuids '''
     body = request.get_json()
     source = body.get('source')
     count = int(body.get('count')) if 'count' in body else 1
-    request_id = body.get('request_id') # Totally okay if this is None. Only use case is for videos, where id is precreated
-    if request_id and count > 1:
-        return jsonify({'success': False, 'log': "Single id provided, but multiple media creation requested."})
-    media_ids = Media.save(event_id = event_id, category_id=category_id, count=count, source=source, request_id=request_id)
+    media_ids = Media.save(event_id = event_id, category_id=category_id, count=count, source=source)
     return jsonify({'success': True, 'media_ids': media_ids})
 
 @media_api.route('/media', methods=['GET'])
 def get_media():
     category_id = request.args.get('categoryId')
-    event_id = request.args.get('eventId') # NOTE AND/OR IS CURRENTLY NOT SUPPORTED, CATEGORY TAKES PRECEDENCE, one or the other.
+    event_id = request.args.get('eventId') # NOTE AND/OR FILTER IS CURRENTLY NOT SUPPORTED, CATEGORY TAKES PRECEDENCE, one or the other.
     size = int(request.args.get('size')) if 'size' in request.args else 25
     start = int(request.args.get('page')) * size if 'page' in request.args else 0
     reverse = bool(request.args.get('reverse')) if 'reverse' in request.args else False
