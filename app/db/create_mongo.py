@@ -4,9 +4,9 @@ from app.db import events
 from app.db import media
 import app.util.mongo as mongo_util
 
-db_name = os.environ['DB_NAME']
 
 def create_db():
+    db_name = os.environ.get('DB_NAME')
     client = mongo_util.get_client()
     # Drop and create db if needed
     if db_name in client.list_database_names():

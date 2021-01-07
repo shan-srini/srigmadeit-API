@@ -30,7 +30,7 @@ def get_media():
     start = int(request.args.get('page')) * size if 'page' in request.args else 0
     reverse = bool(request.args.get('reverse')) if 'reverse' in request.args else False
     if category_id is None and event_id is None:
-        return jsonify({success: False, 'log': 'provide searchParam categoryId or eventId'}), 400
+        return jsonify({'success': False, 'log': 'provide searchParam categoryId or eventId'}), 400
     media = Media.get(category_id = category_id, event_id = event_id, start = start, size = size, reverse = reverse)
     return jsonify({'success': True, 'media_ids': list(media), 'count': media.count()}), 200
 

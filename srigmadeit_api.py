@@ -1,4 +1,5 @@
 import sys
+import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 from app.db.create_mongo import create_db
@@ -12,10 +13,10 @@ from app.routes.events_api import events_api
 from app.routes.categories_api import categories_api
 from app.routes.media_api import media_api
 from app.routes.srig_manage_api import srig_manage_api
-app.register_blueprint(events_api, url_prefix="/api")
-app.register_blueprint(categories_api, url_prefix="/api")
-app.register_blueprint(media_api, url_prefix="/api")
-app.register_blueprint(srig_manage_api, url_prefix="/api")
+app.register_blueprint(events_api)
+app.register_blueprint(categories_api)
+app.register_blueprint(media_api)
+app.register_blueprint(srig_manage_api)
 
 @app.route('/', methods=['GET'])
 def hello():
@@ -24,5 +25,5 @@ def hello():
 if __name__ == '__main__':
     if len(sys.argv) == 2 and sys.argv[1] == 'create_db':
         create_db()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
     # app.run(port=5000, debug=True)
