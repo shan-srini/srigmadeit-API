@@ -1,7 +1,8 @@
 import jwt
+import os
 from datetime import datetime, timedelta
 
-secret='secret'
+secret=os.environ.get('JWT_RANDOM_SECRET')
 
 def produce_jwt() -> str:
     """

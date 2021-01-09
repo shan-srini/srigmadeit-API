@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 from flask import Flask, jsonify
 from flask_cors import CORS
 from app.db.create_mongo import create_db
@@ -7,7 +8,7 @@ from flask_compress import Compress
 
 app = Flask(__name__)
 Compress(app)
-CORS(app, supports_credentials=True, origins=["https://srigmadeit.com", "http://192.168.1.202:1234"])
+CORS(app, supports_credentials=True, origins=[re.compile("https://(www.)?srigmadeit.com"), "http://192.168.1.202:1234"])
 
 from app.routes.events_api import events_api
 from app.routes.categories_api import categories_api
