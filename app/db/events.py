@@ -43,7 +43,7 @@ class Event:
         query: dict = {}
         if search_name:
             query.update({Event.keys['name']: re.compile(search_name, re.IGNORECASE)})
-        events = collection.find(query, skip = start, limit = size).sort("$natural", -1)
+        events = collection.find(query, skip = start, limit = size).sort("timestamp", -1)
         return events # NOTICE RETURNS CURSOR
     
     def get_meta(event_id: str):
